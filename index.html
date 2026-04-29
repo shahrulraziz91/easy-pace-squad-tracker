@@ -1,25 +1,15 @@
-
-                        <!DOCTYPE html>
-                        <html lang="en">
-                        <head>
-                            <meta charset="UTF-8">
-                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-							<style>
-								body {
-									background-color: white; /* Ensure the iframe has a white background */
-								}
-
-								
-							</style>
-                        </head>
-                        <body>
-                            <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>🌸 Easy Pace Squad – Weight Loss Tracker</title>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- ✅ FIREBASE SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -347,6 +337,17 @@
     }
     .btn-cancel-del:hover { background: #e0e0e0; }
     .app-footer { text-align: center; padding: 20px; color: #ad1457; font-size: 0.83em; opacity: 0.8; line-height: 1.8; }
+    .loading-overlay {
+      position: fixed; inset: 0; background: rgba(255,240,248,0.92);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      z-index: 99999; font-size: 1.2em; color: #d81b60; font-weight: 700; gap: 14px;
+    }
+    .loading-spinner {
+      width: 48px; height: 48px; border: 5px solid #ffb3d9;
+      border-top-color: #ff6eb4; border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
     @media (max-width: 600px) {
       .app-header h1 { font-size: 1.55em; }
       .stats-row { grid-template-columns: repeat(2, 1fr); }
@@ -357,13 +358,17 @@
 </head>
 <body>
 
+<!-- LOADING SCREEN -->
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="loading-spinner"></div>
+  <div>🌸 Loading Squad Data...</div>
+</div>
+
 <div class="app-header">
   <h1>🎀 Easy Pace Squad – Weight Loss Tracker 🎀</h1>
   <p>14-Week Squad Journey — Let's glow up together! 💪🌸</p>
 </div>
-
 <div class="week-banner" id="weekBanner"></div>
-
 <div class="main-nav">
   <div class="nav-tab active" id="navTracker"   onclick="switchPage('tracker')">📊 Progress Tracker</div>
   <div class="nav-tab"        id="navDataentry" onclick="switchPage('dataentry')">📋 Data Entry</div>
@@ -488,9 +493,7 @@
   🌸 Made with love for Aimi, Misha, Tharsini, Awanis & Najiha 🌸<br>
   Stay consistent, stay fabulous! ✨
 </div>
-
 <div id="toast"></div>
-
 <div class="modal-overlay" id="confirmModal">
   <div class="modal-box">
     <div class="modal-icon">🗑️</div>
@@ -505,16 +508,32 @@
 
 <script>
 /* ══════════════════════════════════════
-   CONFIG  ✅ Najiha (updated)
+   🔥 YOUR FIREBASE CONFIG ✅
+══════════════════════════════════════ */
+const firebaseConfig = {
+  apiKey: "AIzaSyCcVvwBACvoNhi-vHzP8VNU5L3jOqSWr8A",
+  authDomain: "easy-pace-squad-6f0d7.firebaseapp.com",
+  databaseURL: "https://easy-pace-squad-6f0d7-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "easy-pace-squad-6f0d7",
+  storageBucket: "easy-pace-squad-6f0d7.firebasestorage.app",
+  messagingSenderId: "426753957280",
+  appId: "1:426753957280:web:ee660e1dcb81afa57358c5",
+  measurementId: "G-RX013D7MPS"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
+/* ══════════════════════════════════════
+   CONFIG
 ══════════════════════════════════════ */
 const MEMBERS = [
   { name:'Aimi',     emoji:'🌸', color:'#2e7d32' },
   { name:'Misha',    emoji:'🌷', color:'#1565c0' },
   { name:'Tharsini', emoji:'🌺', color:'#d50000' },
   { name:'Awanis',   emoji:'🍓', color:'#6a1b9a' },
-  { name:'Najiha',   emoji:'🌼', color:'#f9a825' },  // ✅ UPDATED
+  { name:'Najiha',   emoji:'🌼', color:'#f9a825' },
 ];
-
 const WEEK_DATES = [
   { label:'W1',  range:'27 Apr – 1 May'  },
   { label:'W2',  range:'4 May – 8 May'   },
@@ -531,60 +550,90 @@ const WEEK_DATES = [
   { label:'W13', range:'20 Jul – 24 Jul' },
   { label:'W14', range:'27 Jul – 31 Jul' },
 ];
-
 const WEEK_STARTS = [
   '2025-04-27','2025-05-04','2025-05-11','2025-05-18',
   '2025-05-25','2025-06-01','2025-06-08','2025-06-15',
   '2025-06-22','2025-06-29','2025-07-06','2025-07-13',
   '2025-07-20','2025-07-27',
 ].map(d => new Date(d));
-
 const PROGRAM_END = new Date('2025-08-01');
-const STORAGE_KEY = 'wlt_squad_v7';
-const HEIGHT_KEY  = 'wlt_heights_v7';
 
 /* ══════════════════════════════════════
    STATE
 ══════════════════════════════════════ */
-let currentMember  = 0;
-let indivChart     = null;
-let bmiChart       = null;
-let groupChart     = null;
-let groupBmiChart  = null;
-let data           = loadData();
-let heights        = loadHeights();
+let currentMember = 0;
+let indivChart    = null;
+let bmiChart      = null;
+let groupChart    = null;
+let groupBmiChart = null;
+let data          = initData();
+let heights       = initHeights();
 window._deleteTarget = null;
-let editingKey     = null;
+let editingKey    = null;
 
-/* ══════════════════════════════════════
-   STORAGE
-══════════════════════════════════════ */
-function loadData() {
-  try {
-    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
-    if (s) {
-      MEMBERS.forEach(m => { if (!s[m.name]) s[m.name] = Array(14).fill(null); });
-      return s;
-    }
-  } catch(e) {}
-  return initData();
-}
 function initData() {
   const d = {};
   MEMBERS.forEach(m => { d[m.name] = Array(14).fill(null); });
   return d;
 }
-function loadHeights() {
-  try {
-    const h = JSON.parse(localStorage.getItem(HEIGHT_KEY));
-    if (h) return h;
-  } catch(e) {}
+function initHeights() {
   const h = {};
   MEMBERS.forEach(m => { h[m.name] = null; });
   return h;
 }
-function persist()        { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-function persistHeights() { localStorage.setItem(HEIGHT_KEY,  JSON.stringify(heights)); }
+
+/* ══════════════════════════════════════
+   🔥 FIREBASE: LOAD DATA (REAL-TIME)
+══════════════════════════════════════ */
+function loadFromFirebase() {
+  db.ref('squadData/weights').on('value', snapshot => {
+    const val = snapshot.val();
+    if (val) {
+      MEMBERS.forEach(m => {
+        if (val[m.name]) {
+          const arr = Array(14).fill(null);
+          Object.keys(val[m.name]).forEach(k => {
+            arr[parseInt(k)] = val[m.name][k];
+          });
+          data[m.name] = arr;
+        }
+      });
+    }
+    db.ref('squadData/heights').on('value', hSnap => {
+      const hVal = hSnap.val();
+      if (hVal) {
+        MEMBERS.forEach(m => {
+          if (hVal[m.name] !== undefined) heights[m.name] = hVal[m.name];
+        });
+      }
+      document.getElementById('loadingOverlay').style.display = 'none';
+      renderWeekBanner();
+      initDataEntryDropdowns();
+      renderTrackerPage();
+    });
+  });
+}
+
+/* ══════════════════════════════════════
+   🔥 FIREBASE: SAVE WEIGHT DATA
+══════════════════════════════════════ */
+function persist() {
+  const saveData = {};
+  MEMBERS.forEach(m => {
+    saveData[m.name] = {};
+    data[m.name].forEach((v, i) => {
+      if (v !== null) saveData[m.name][i] = v;
+    });
+  });
+  db.ref('squadData/weights').set(saveData);
+}
+
+/* ══════════════════════════════════════
+   🔥 FIREBASE: SAVE HEIGHT DATA
+══════════════════════════════════════ */
+function persistHeights() {
+  db.ref('squadData/heights').set(heights);
+}
 
 /* ══════════════════════════════════════
    BMI HELPERS
@@ -697,7 +746,6 @@ function renderHeightSetup() {
       ${statusMsg}
     </div>`;
 }
-
 function saveHeight() {
   const m  = MEMBERS[currentMember];
   const cm = parseFloat(document.getElementById('heightInput').value);
@@ -722,7 +770,6 @@ function renderTrackerPage() {
   updateIndivChart();
   updateBmiChart();
 }
-
 function buildMemberTabs() {
   const el = document.getElementById('memberTabs');
   el.innerHTML = '';
@@ -734,7 +781,6 @@ function buildMemberTabs() {
     el.appendChild(d);
   });
 }
-
 function buildInputGrid() {
   const m      = MEMBERS[currentMember];
   const curIdx = getCurrentWeekIndex();
@@ -772,13 +818,11 @@ function buildInputGrid() {
       </div>`;
   });
 }
-
 function onTrackerInput(idx) {
   const m   = MEMBERS[currentMember];
   const raw = document.getElementById('tw' + idx).value;
   const val = parseFloat(raw);
   data[m.name][idx] = (!isNaN(val) && val > 0) ? val : null;
-  persist();
   const prev = data[m.name][idx - 1];
   const cur  = data[m.name][idx];
   const hM   = heights[m.name];
@@ -802,7 +846,6 @@ function onTrackerInput(idx) {
   updateIndivChart();
   updateBmiChart();
 }
-
 function saveTrackerData() {
   const m = MEMBERS[currentMember];
   let savedCount = 0;
@@ -904,7 +947,7 @@ function updateIndivChart() {
         legend: { labels: { color: '#880e4f', font: { size: 13, weight: 'bold' } } },
         tooltip: { callbacks: {
           title: items => `${WEEK_DATES[items[0].dataIndex].label} · ${WEEK_DATES[items[0].dataIndex].range}`,
-          label: ctx  => ctx.parsed.y !== null ? ` Weight: ${ctx.parsed.y} kg` : ' No data',
+          label: ctx  => ctx.parsed.y !== null ? `Weight: ${ctx.parsed.y} kg` : ' No data',
         }}
       },
       scales: {
@@ -915,7 +958,6 @@ function updateIndivChart() {
     }
   });
 }
-
 function updateBmiChart() {
   if (bmiChart) { bmiChart.destroy(); bmiChart = null; }
   const m        = MEMBERS[currentMember];
@@ -952,9 +994,9 @@ function updateBmiChart() {
           label: ctx => {
             if (ctx.datasetIndex === 0 && ctx.parsed.y !== null) {
               const cat = bmiCategory(ctx.parsed.y);
-              return ` BMI: ${ctx.parsed.y} — ${cat.label}`;
+              return `BMI: ${ctx.parsed.y} — ${cat.label}`;
             }
-            return ` ${ctx.dataset.label}: ${ctx.parsed.y}`;
+            return `${ctx.dataset.label}: ${ctx.parsed.y}`;
           }
         }}
       },
@@ -985,7 +1027,6 @@ function initDataEntryDropdowns() {
   MEMBERS.forEach(m => { aMem.innerHTML += `<option value="${m.name}">${m.emoji} ${m.name}</option>`; });
   WEEK_DATES.forEach((w, i) => { aWk.innerHTML += `<option value="${i}">${w.label} (${w.range})</option>`; });
 }
-
 function openAddForm() {
   document.getElementById('addFormCard').classList.add('visible');
   document.getElementById('addWeight').value = '';
@@ -995,14 +1036,13 @@ function closeAddForm() {
   document.getElementById('addFormCard').classList.remove('visible');
   document.getElementById('addWeight').value = '';
 }
-
 function submitAddEntry() {
   const memberName = document.getElementById('addMember').value;
   const weekIdx    = parseInt(document.getElementById('addWeek').value, 10);
   const weight     = parseFloat(document.getElementById('addWeight').value);
-  if (!memberName)                          { showToast('⚠️ Select a member!'); return; }
-  if (isNaN(weekIdx)||weekIdx<0||weekIdx>13){ showToast('⚠️ Select a week!'); return; }
-  if (isNaN(weight)||weight<=0||weight>300) { showToast('⚠️ Enter valid weight (1–300 kg)!'); return; }
+  if (!memberName)                           { showToast('⚠️ Select a member!'); return; }
+  if (isNaN(weekIdx)||weekIdx<0||weekIdx>13) { showToast('⚠️ Select a week!'); return; }
+  if (isNaN(weight)||weight<=0||weight>300)  { showToast('⚠️ Enter valid weight (1–300 kg)!'); return; }
   const existing = data[memberName][weekIdx];
   data[memberName][weekIdx] = weight;
   persist();
@@ -1013,7 +1053,6 @@ function submitAddEntry() {
     ? `✏️ Updated ${memberName}'s ${WEEK_DATES[weekIdx].label}: ${weight} kg`
     : `✅ Added ${memberName}'s ${WEEK_DATES[weekIdx].label}: ${weight} kg`, 3500);
 }
-
 function renderDataEntryTable() {
   const fM         = document.getElementById('deFilterMember').value;
   const fW         = document.getElementById('deFilterWeek').value;
@@ -1091,14 +1130,12 @@ function renderDataEntryTable() {
       <span class="summary-pill" style="background:#e8f5e9;border:1.5px solid #a5d6a7;color:#1b5e20;">✅ ${normalBmi} Normal BMI</span>
     </div>`;
 }
-
 function changePillHtml(change) {
   if (change === null) return `<span class="change-pill none">—</span>`;
   if (change < 0) return `<span class="change-pill down">▼ ${Math.abs(change).toFixed(1)} kg</span>`;
   if (change > 0) return `<span class="change-pill up">▲ ${change.toFixed(1)} kg</span>`;
   return `<span class="change-pill same">● No change</span>`;
 }
-
 function startEdit(memberName, weekIdx) {
   editingKey = `${memberName}-${weekIdx}`;
   renderDataEntryTable();
@@ -1119,7 +1156,7 @@ function confirmEdit(memberName, weekIdx, safeKey) {
 function cancelEdit() { editingKey = null; renderDataEntryTable(); }
 
 /* ══════════════════════════════════════
-   ✅ DELETE — FULLY FIXED
+   DELETE
 ══════════════════════════════════════ */
 function askDelete(memberName, weekIdx) {
   const wIdx = parseInt(weekIdx, 10);
@@ -1133,7 +1170,6 @@ function askDelete(memberName, weekIdx) {
      </span>`;
   document.getElementById('confirmModal').classList.add('visible');
 }
-
 function confirmDelete() {
   const target = window._deleteTarget;
   if (!target) { closeModal(); return; }
@@ -1148,7 +1184,6 @@ function confirmDelete() {
   renderTrackerPage();
   showToast(`🗑️ Deleted ${memberName}'s ${WEEK_DATES[weekIdx].label} (${oldWeight !== null ? oldWeight + ' kg' : ''})`);
 }
-
 function closeModal() {
   window._deleteTarget = null;
   document.getElementById('confirmModal').classList.remove('visible');
@@ -1163,7 +1198,6 @@ function renderGroupPage() {
   updateGroupBmiChart();
   updateGroupTable();
 }
-
 function updateGroupStats() {
   let totalLost = 0, count = 0, maxLost = -Infinity, mvp = null;
   MEMBERS.forEach(m => {
@@ -1198,7 +1232,6 @@ function updateGroupStats() {
       </div>
     </div>`;
 }
-
 function updateGroupChart() {
   if (groupChart) { groupChart.destroy(); groupChart = null; }
   const ctx = document.getElementById('groupChart').getContext('2d');
@@ -1220,7 +1253,7 @@ function updateGroupChart() {
         legend: { labels: { color: '#333', font: { size: 12, weight: 'bold' }, padding: 14, usePointStyle: true } },
         tooltip: { callbacks: {
           title: items => `${WEEK_DATES[items[0].dataIndex].label} · ${WEEK_DATES[items[0].dataIndex].range}`,
-          label: ctx  => ` ${ctx.dataset.label}: ${ctx.parsed.y !== null ? ctx.parsed.y + ' kg' : 'No data'}`,
+          label: ctx  => `${ctx.dataset.label}: ${ctx.parsed.y !== null ? ctx.parsed.y + ' kg' : 'No data'}`,
         }}
       },
       scales: {
@@ -1231,7 +1264,6 @@ function updateGroupChart() {
     }
   });
 }
-
 function updateGroupBmiChart() {
   if (groupBmiChart) { groupBmiChart.destroy(); groupBmiChart = null; }
   const ctx = document.getElementById('groupBmiChart').getContext('2d');
@@ -1264,9 +1296,9 @@ function updateGroupBmiChart() {
           label: ctx => {
             if (ctx.datasetIndex < MEMBERS.length && ctx.parsed.y !== null) {
               const cat = bmiCategory(ctx.parsed.y);
-              return ` ${ctx.dataset.label}: BMI ${ctx.parsed.y} (${cat.label})`;
+              return `${ctx.dataset.label}: BMI ${ctx.parsed.y} (${cat.label})`;
             }
-            return ` ${ctx.dataset.label}`;
+            return `${ctx.dataset.label}`;
           }
         }}
       },
@@ -1279,7 +1311,6 @@ function updateGroupBmiChart() {
     }
   });
 }
-
 function updateGroupTable() {
   document.getElementById('groupTableHead').innerHTML = `
     <tr>
@@ -1328,16 +1359,9 @@ function updateGroupTable() {
 function init() {
   renderWeekBanner();
   initDataEntryDropdowns();
-  renderTrackerPage();
+  loadFromFirebase();
 }
 init();
 </script>
 </body>
 </html>
-
-							<script>
-                            	
-							</script>
-                        </body>
-                        </html>
-                    
