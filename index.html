@@ -1,0 +1,1343 @@
+
+                        <!DOCTYPE html>
+                        <html lang="en">
+                        <head>
+                            <meta charset="UTF-8">
+                            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+							<style>
+								body {
+									background-color: white; /* Ensure the iframe has a white background */
+								}
+
+								
+							</style>
+                        </head>
+                        <body>
+                            <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🌸 Easy Pace Squad – Weight Loss Tracker</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(135deg, #ffe4f0, #fff0f8, #ffd6eb);
+      min-height: 100vh; padding: 20px; color: #5a2d4a;
+    }
+    .app-header {
+      text-align: center; padding: 30px 20px 20px;
+      background: linear-gradient(135deg, #ff6eb4, #ff94c8, #ffb3d9);
+      border-radius: 24px; margin-bottom: 24px;
+      box-shadow: 0 8px 32px rgba(255,110,180,0.35);
+    }
+    .app-header::before {
+      content: '🌸🌷🌸🌷🌸🌷🌸🌷🌸';
+      font-size: 20px; display: block; margin-bottom: 8px; letter-spacing: 4px;
+    }
+    .app-header h1 { font-size: 2.2em; color: #fff; text-shadow: 0 2px 8px rgba(180,50,100,0.3); letter-spacing: 2px; }
+    .app-header p  { color: #fff5fa; font-size: 0.95em; margin-top: 6px; font-style: italic; }
+    .week-banner {
+      display: flex; align-items: center; justify-content: center;
+      gap: 16px; flex-wrap: wrap;
+      background: linear-gradient(135deg, #fff0f8, #ffd6eb);
+      border: 1.5px solid #ffb3d9; border-radius: 14px;
+      padding: 14px 20px; margin-bottom: 22px; text-align: center;
+    }
+    .wb-item { display: flex; flex-direction: column; align-items: center; }
+    .wb-val  { font-size: 1.5em; font-weight: 700; color: #880e4f; }
+    .wb-lbl  { font-size: 0.72em; color: #ad1457; font-weight: 600; }
+    .divider { color: #ffb3d9; font-size: 1.4em; }
+    .main-nav {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      margin-bottom: 22px; justify-content: center;
+    }
+    .nav-tab {
+      padding: 11px 26px; border-radius: 50px; cursor: pointer;
+      font-weight: 700; font-size: 0.95em; border: 2.5px solid #ff94c8;
+      background: #fff; color: #c2185b; transition: all 0.25s;
+      box-shadow: 0 2px 10px rgba(255,148,200,0.15);
+      display: flex; align-items: center; gap: 7px; user-select: none;
+    }
+    .nav-tab:hover, .nav-tab.active {
+      background: linear-gradient(135deg, #ff6eb4, #ff94c8);
+      color: #fff; border-color: #ff6eb4;
+      transform: translateY(-2px); box-shadow: 0 6px 18px rgba(255,110,180,0.35);
+    }
+    .members-bar {
+      display: flex; justify-content: center; flex-wrap: wrap; gap: 12px; margin-bottom: 24px;
+    }
+    .member-tab {
+      background: #fff; border: 2.5px solid #ff94c8; color: #c2185b;
+      padding: 9px 20px; border-radius: 50px; font-weight: 700; cursor: pointer;
+      font-size: 0.92em; transition: all 0.25s; box-shadow: 0 2px 10px rgba(255,148,200,0.18);
+      display: flex; align-items: center; gap: 6px; user-select: none;
+    }
+    .member-tab:hover, .member-tab.active {
+      background: linear-gradient(135deg, #ff6eb4, #ff94c8);
+      color: #fff; border-color: #ff6eb4;
+      transform: translateY(-2px); box-shadow: 0 6px 18px rgba(255,110,180,0.35);
+    }
+    .avatar {
+      width: 26px; height: 26px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 13px; background: linear-gradient(135deg, #ffb3d9, #ff6eb4);
+      color: white; font-weight: bold;
+    }
+    .card {
+      background: #fff; border-radius: 20px; padding: 24px 26px;
+      margin-bottom: 22px; box-shadow: 0 4px 20px rgba(255,110,180,0.13);
+      border: 1.5px solid #ffd6eb;
+    }
+    .card h2 {
+      font-size: 1.15em; color: #d81b60; margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+      border-bottom: 2px dashed #ffb3d9; padding-bottom: 10px;
+    }
+    .page { display: none; }
+    .page.active { display: block; }
+    .height-setup {
+      background: linear-gradient(135deg, #fff0f8, #ffeaf5);
+      border: 2px dashed #ff94c8; border-radius: 14px;
+      padding: 16px 20px; margin-bottom: 20px;
+      display: flex; align-items: center; gap: 16px; flex-wrap: wrap;
+    }
+    .height-setup label { font-weight: 700; color: #c2185b; font-size: 0.9em; white-space: nowrap; }
+    .height-setup input {
+      border: 1.5px solid #ffb3d9; border-radius: 10px;
+      padding: 8px 14px; font-size: 0.95em; color: #5a2d4a;
+      background: #fff; outline: none; width: 110px; font-weight: 600;
+    }
+    .height-setup input:focus { border-color: #ff6eb4; box-shadow: 0 0 0 3px rgba(255,110,180,0.15); }
+    .height-setup .btn-set-height {
+      background: linear-gradient(135deg, #ff6eb4, #e91e8c);
+      color: #fff; border: none; padding: 9px 22px; border-radius: 50px;
+      font-size: 0.88em; font-weight: 700; cursor: pointer;
+      box-shadow: 0 3px 12px rgba(233,30,140,0.25); transition: all 0.2s;
+    }
+    .height-setup .btn-set-height:hover { transform: translateY(-1px); }
+    .height-display { font-size: 0.88em; color: #ad1457; font-style: italic; }
+    .input-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px;
+    }
+    .week-input-box {
+      background: linear-gradient(135deg, #fff0f8, #ffe4f0);
+      border-radius: 16px; padding: 14px 10px; text-align: center;
+      border: 1.5px solid #ffb3d9; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .week-input-box:hover { border-color: #ff6eb4; box-shadow: 0 3px 12px rgba(255,110,180,0.18); }
+    .week-input-box.current-week {
+      border: 2.5px solid #ff6eb4;
+      background: linear-gradient(135deg, #ffe0f0, #ffd6eb);
+      box-shadow: 0 0 0 4px rgba(255,110,180,0.15);
+    }
+    .week-input-box.current-week .week-label::after { content: ' 📍'; }
+    .week-label { font-weight: 700; color: #c2185b; font-size: 0.88em; margin-bottom: 2px; }
+    .week-date  { font-size: 0.67em; color: #ad1457; margin-bottom: 8px; font-style: italic; opacity: 0.85; }
+    .week-input-box input {
+      width: 100%; border: 1.5px solid #ffb3d9; border-radius: 10px;
+      padding: 8px 6px; text-align: center; font-size: 1em;
+      color: #5a2d4a; background: #fff; outline: none; transition: border-color 0.2s;
+    }
+    .week-input-box input:focus { border-color: #ff6eb4; box-shadow: 0 0 0 3px rgba(255,110,180,0.15); }
+    .loss-badge { margin-top: 5px; font-size: 0.73em; font-weight: 600; min-height: 16px; }
+    .loss-badge.good { color: #2e7d32; }
+    .loss-badge.bad  { color: #c62828; }
+    .loss-badge.neu  { color: #999; }
+    .bmi-badge {
+      margin-top: 6px; padding: 4px 8px; border-radius: 20px;
+      font-size: 0.7em; font-weight: 700; display: inline-block; letter-spacing: 0.3px;
+    }
+    .bmi-badge.underweight { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+    .bmi-badge.normal      { background: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; }
+    .bmi-badge.overweight  { background: #fff8e1; color: #f57f17; border: 1px solid #ffe082; }
+    .bmi-badge.obese       { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+    .bmi-badge.none        { background: #f5f5f5; color: #999;    border: 1px solid #e0e0e0; }
+    .bmi-legend { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 18px; align-items: center; }
+    .bmi-legend-title { font-size: 0.8em; font-weight: 700; color: #ad1457; margin-right: 4px; }
+    .bmi-legend-item { padding: 3px 12px; border-radius: 50px; font-size: 0.75em; font-weight: 700; }
+    .btn-save {
+      display: block; margin: 20px auto 0;
+      background: linear-gradient(135deg, #ff6eb4, #e91e8c);
+      color: #fff; border: none; padding: 13px 40px; border-radius: 50px;
+      font-size: 1em; font-weight: 700; cursor: pointer;
+      box-shadow: 0 4px 18px rgba(233,30,140,0.3); transition: all 0.25s; letter-spacing: 1px;
+    }
+    .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(233,30,140,0.4); }
+    .btn-sm {
+      border: none; padding: 5px 13px; border-radius: 20px; font-size: 0.78em;
+      font-weight: 700; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+      display: inline-flex; align-items: center; gap: 4px;
+    }
+    .btn-edit         { background: #fff0f8; color: #c2185b; border: 1.5px solid #ff94c8; }
+    .btn-edit:hover   { background: #ff94c8; color: #fff; }
+    .btn-delete       { background: #fff0f0; color: #c62828; border: 1.5px solid #ef9a9a; }
+    .btn-delete:hover { background: #ef9a9a; color: #fff; }
+    .btn-save-row       { background: #e8f5e9; color: #2e7d32; border: 1.5px solid #a5d6a7; }
+    .btn-save-row:hover { background: #a5d6a7; color: #fff; }
+    .btn-cancel-row       { background: #f5f5f5; color: #555; border: 1.5px solid #ccc; }
+    .btn-cancel-row:hover { background: #ccc; color: #333; }
+    .btn-add-entry {
+      background: linear-gradient(135deg, #ff94c8, #ff6eb4);
+      color: #fff; border: none; padding: 9px 22px; border-radius: 50px;
+      font-size: 0.92em; font-weight: 700; cursor: pointer;
+      box-shadow: 0 3px 12px rgba(255,110,180,0.25); transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-add-entry:hover { transform: translateY(-1px); box-shadow: 0 5px 16px rgba(255,110,180,0.4); }
+    .btn-add-submit {
+      background: linear-gradient(135deg, #66bb6a, #43a047);
+      color: #fff; border: none; padding: 10px 26px; border-radius: 50px;
+      font-size: 0.92em; font-weight: 700; cursor: pointer;
+      box-shadow: 0 3px 12px rgba(67,160,71,0.3); transition: all 0.2s;
+      display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-add-submit:hover { transform: translateY(-1px); background: linear-gradient(135deg, #43a047, #2e7d32); }
+    .btn-cancel-add {
+      background: #f5f5f5; color: #666; border: 1.5px solid #ddd;
+      padding: 10px 22px; border-radius: 50px; font-size: 0.92em; font-weight: 700;
+      cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .btn-cancel-add:hover { background: #e0e0e0; color: #333; }
+    .stats-row {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
+      gap: 14px; margin-bottom: 20px;
+    }
+    .stat-box {
+      background: linear-gradient(135deg, #fff0f8, #ffd6eb);
+      border-radius: 14px; padding: 15px 12px; text-align: center; border: 1.5px solid #ffb3d9;
+    }
+    .stat-label { font-size: 0.73em; color: #ad1457; font-weight: 600; }
+    .stat-value { font-size: 1.45em; font-weight: 700; color: #880e4f; margin-top: 4px; }
+    .stat-unit  { font-size: 0.68em; color: #c2185b; }
+    .chart-wrap {
+      position: relative; height: 300px; background: #fff8fc;
+      border-radius: 14px; padding: 10px; border: 1.5px dashed #ffb3d9;
+    }
+    .group-chart-wrap {
+      position: relative; height: 360px; background: #fff8fc;
+      border-radius: 14px; padding: 10px; border: 1.5px dashed #ffb3d9; margin-bottom: 20px;
+    }
+    .de-filter-bar {
+      display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 20px;
+    }
+    .de-filter-bar select {
+      border: 1.5px solid #ffb3d9; border-radius: 10px; padding: 9px 14px;
+      font-size: 0.9em; color: #5a2d4a; background: #fff0f8; outline: none;
+      cursor: pointer; font-weight: 600;
+    }
+    .de-filter-bar select:focus { border-color: #ff6eb4; }
+    .add-form-card {
+      background: linear-gradient(135deg, #fff5fb, #ffe8f3);
+      border: 2px dashed #ff94c8; border-radius: 16px;
+      padding: 22px 24px; margin-bottom: 22px;
+      display: none; animation: slideDown 0.25s ease;
+    }
+    .add-form-card.visible { display: block; }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .add-form-card h3 { color: #d81b60; margin-bottom: 16px; font-size: 1em; display: flex; align-items: center; gap: 7px; }
+    .add-form-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+      gap: 14px; margin-bottom: 16px;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 0.78em; font-weight: 700; color: #ad1457; display: flex; align-items: center; gap: 5px; }
+    .form-group select,
+    .form-group input[type="number"] {
+      border: 1.5px solid #ffb3d9; border-radius: 10px; padding: 9px 12px;
+      font-size: 0.92em; color: #5a2d4a; background: #fff; outline: none;
+      transition: border-color 0.2s; font-weight: 500;
+    }
+    .form-group select:focus,
+    .form-group input[type="number"]:focus { border-color: #ff6eb4; box-shadow: 0 0 0 3px rgba(255,110,180,0.12); }
+    .form-actions { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding-top: 4px; }
+    .de-table-wrap { overflow-x: auto; }
+    .de-table { width: 100%; border-collapse: collapse; font-size: 0.88em; min-width: 700px; }
+    .de-table thead tr { background: linear-gradient(135deg, #ff6eb4, #ff94c8); }
+    .de-table th { padding: 12px 14px; color: #fff; font-weight: 700; text-align: left; white-space: nowrap; }
+    .de-table th.tc { text-align: center; }
+    .de-table tbody tr { border-bottom: 1px solid #fde8f3; transition: background 0.15s; }
+    .de-table tbody tr:nth-child(even) { background: #fff8fc; }
+    .de-table tbody tr:hover { background: #fff0f8 !important; }
+    .de-table td { padding: 10px 14px; color: #5a2d4a; vertical-align: middle; }
+    .de-table td.tc { text-align: center; }
+    .inline-edit-input {
+      width: 90px; border: 2px solid #ff6eb4; border-radius: 8px;
+      padding: 5px 8px; text-align: center; font-size: 0.95em;
+      color: #5a2d4a; background: #fff0f8; outline: none; font-weight: 600;
+    }
+    .inline-edit-input:focus { box-shadow: 0 0 0 3px rgba(255,110,180,0.15); }
+    .member-chip {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: linear-gradient(135deg, #ffe4f0, #ffd6eb);
+      border: 1.5px solid #ffb3d9; border-radius: 50px;
+      padding: 3px 12px; font-weight: 700; font-size: 0.84em; color: #c2185b;
+    }
+    .change-pill { display: inline-block; padding: 3px 11px; border-radius: 50px; font-size: 0.82em; font-weight: 700; }
+    .change-pill.down { background: #e8f5e9; color: #2e7d32; }
+    .change-pill.up   { background: #ffebee; color: #c62828; }
+    .change-pill.same { background: #f3e5f5; color: #7b1fa2; }
+    .change-pill.none { background: #f5f5f5; color: #999; }
+    .action-btns { display: flex; gap: 6px; align-items: center; justify-content: center; }
+    .no-data-row td { text-align: center; padding: 36px 20px; color: #ad1457; font-style: italic; }
+    .summary-bar { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+    .summary-pill {
+      padding: 5px 16px; border-radius: 50px; font-size: 0.82em; font-weight: 700;
+      display: inline-flex; align-items: center; gap: 5px;
+    }
+    .group-table-wrap { overflow-x: auto; }
+    .group-table { width: 100%; border-collapse: collapse; font-size: 0.8em; min-width: 900px; }
+    .group-table thead tr { background: linear-gradient(135deg, #ff6eb4, #ff94c8); }
+    .group-table th { padding: 9px 10px; color: #fff; font-weight: 700; text-align: center; white-space: nowrap; }
+    .group-table th .th-date { display: block; font-size: 0.7em; font-weight: 400; opacity: 0.9; margin-top: 1px; }
+    .group-table td { padding: 8px 10px; text-align: center; border-bottom: 1px solid #ffd6eb; white-space: nowrap; }
+    .group-table tr:hover td { background: #fff0f8; }
+    .group-table .name-col { font-weight: 700; text-align: left; min-width: 120px; }
+    .badge-loss { display: inline-block; padding: 3px 10px; border-radius: 50px; font-size: 0.8em; font-weight: 700; }
+    .badge-loss.pos { background: #e8f5e9; color: #2e7d32; }
+    .badge-loss.neg { background: #ffebee; color: #c62828; }
+    .badge-loss.neu { background: #f3e5f5; color: #7b1fa2; }
+    #toast {
+      position: fixed; bottom: 28px; left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: linear-gradient(135deg, #e91e8c, #ff6eb4);
+      color: #fff; padding: 12px 30px; border-radius: 50px;
+      font-weight: 700; font-size: 0.92em;
+      box-shadow: 0 6px 24px rgba(233,30,140,0.35);
+      z-index: 9999; transition: transform 0.35s cubic-bezier(.34,1.56,.64,1);
+      pointer-events: none; white-space: nowrap; max-width: 90vw;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(90,45,74,0.4); z-index: 8000;
+      align-items: center; justify-content: center;
+    }
+    .modal-overlay.visible { display: flex; }
+    .modal-box {
+      background: #fff; border-radius: 22px; padding: 32px 36px;
+      text-align: center; max-width: 400px; width: 92%;
+      box-shadow: 0 16px 48px rgba(255,110,180,0.3);
+      border: 2px solid #ffd6eb; animation: popIn 0.25s ease;
+    }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.85); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+    .modal-icon { font-size: 2.8em; margin-bottom: 12px; }
+    .modal-box h3 { color: #d81b60; margin-bottom: 8px; font-size: 1.15em; }
+    .modal-box p  { color: #5a2d4a; font-size: 0.9em; margin-bottom: 22px; line-height: 1.5; }
+    .modal-actions { display: flex; gap: 12px; justify-content: center; }
+    .btn-confirm-del {
+      background: linear-gradient(135deg, #e53935, #ef5350);
+      color: #fff; border: none; padding: 11px 26px; border-radius: 50px;
+      font-weight: 700; cursor: pointer; font-size: 0.92em;
+      box-shadow: 0 3px 12px rgba(229,57,53,0.3); transition: all 0.2s;
+    }
+    .btn-confirm-del:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-cancel-del {
+      background: #f5f5f5; color: #555; border: 1.5px solid #ccc;
+      padding: 11px 26px; border-radius: 50px; font-weight: 700;
+      cursor: pointer; font-size: 0.92em; transition: all 0.2s;
+    }
+    .btn-cancel-del:hover { background: #e0e0e0; }
+    .app-footer { text-align: center; padding: 20px; color: #ad1457; font-size: 0.83em; opacity: 0.8; line-height: 1.8; }
+    @media (max-width: 600px) {
+      .app-header h1 { font-size: 1.55em; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+      .input-grid { grid-template-columns: repeat(2, 1fr); }
+      .nav-tab { padding: 9px 16px; font-size: 0.85em; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-header">
+  <h1>🎀 Easy Pace Squad – Weight Loss Tracker 🎀</h1>
+  <p>14-Week Squad Journey — Let's glow up together! 💪🌸</p>
+</div>
+
+<div class="week-banner" id="weekBanner"></div>
+
+<div class="main-nav">
+  <div class="nav-tab active" id="navTracker"   onclick="switchPage('tracker')">📊 Progress Tracker</div>
+  <div class="nav-tab"        id="navDataentry" onclick="switchPage('dataentry')">📋 Data Entry</div>
+  <div class="nav-tab"        id="navGroup"     onclick="switchPage('group')">👯 Group Overview</div>
+</div>
+
+<!-- PAGE: TRACKER -->
+<div class="page active" id="pageTracker">
+  <div class="members-bar" id="memberTabs"></div>
+  <div class="card">
+    <h2>📐 Height Setup (for BMI)</h2>
+    <div id="heightSetupArea"></div>
+    <div class="bmi-legend" style="margin-top:14px;">
+      <span class="bmi-legend-title">BMI Scale:</span>
+      <span class="bmi-legend-item bmi-badge underweight">Underweight &lt;18.5</span>
+      <span class="bmi-legend-item bmi-badge normal">Normal 18.5–24.9</span>
+      <span class="bmi-legend-item bmi-badge overweight">Overweight 25–29.9</span>
+      <span class="bmi-legend-item bmi-badge obese">Obese ≥30</span>
+    </div>
+  </div>
+  <div class="card">
+    <h2>📊 My Stats</h2>
+    <div class="stats-row" id="statsRow"></div>
+  </div>
+  <div class="card">
+    <h2>⚖️ Weekly Weight Entry + BMI</h2>
+    <div class="input-grid" id="inputGrid"></div>
+    <button class="btn-save" type="button" onclick="saveTrackerData()">💾 Save My Progress</button>
+  </div>
+  <div class="card">
+    <h2>📈 My Weight Progress Chart</h2>
+    <div class="chart-wrap"><canvas id="indivChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h2>📉 My BMI Progress Chart</h2>
+    <div class="chart-wrap"><canvas id="bmiChart"></canvas></div>
+  </div>
+</div>
+
+<!-- PAGE: DATA ENTRY -->
+<div class="page" id="pageDataentry">
+  <div class="card">
+    <h2>📋 Participant Weight Data Entry</h2>
+    <div class="de-filter-bar">
+      <select id="deFilterMember" onchange="renderDataEntryTable()">
+        <option value="">👥 All Members</option>
+      </select>
+      <select id="deFilterWeek" onchange="renderDataEntryTable()">
+        <option value="">📅 All Weeks</option>
+      </select>
+      <button class="btn-add-entry" type="button" onclick="openAddForm()">➕ Add Entry</button>
+    </div>
+    <div class="add-form-card" id="addFormCard">
+      <h3>✏️ Add New Weight Entry</h3>
+      <div class="add-form-grid">
+        <div class="form-group">
+          <label>👤 Member</label>
+          <select id="addMember"></select>
+        </div>
+        <div class="form-group">
+          <label>📅 Week</label>
+          <select id="addWeek"></select>
+        </div>
+        <div class="form-group">
+          <label>⚖️ Weight (kg)</label>
+          <input type="number" id="addWeight" step="0.1" min="1" max="300" placeholder="e.g. 65.5" />
+        </div>
+      </div>
+      <div class="form-actions">
+        <button class="btn-add-submit" type="button" onclick="submitAddEntry()">✅ Add Entry</button>
+        <button class="btn-cancel-add" type="button" onclick="closeAddForm()">✖ Cancel</button>
+      </div>
+    </div>
+    <div class="de-table-wrap">
+      <table class="de-table">
+        <thead>
+          <tr>
+            <th style="width:36px;">#</th>
+            <th>Member</th>
+            <th>Week</th>
+            <th>Date Range</th>
+            <th class="tc">Weight (kg)</th>
+            <th class="tc">BMI</th>
+            <th class="tc">Category</th>
+            <th class="tc">Change</th>
+            <th class="tc">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="deTableBody"></tbody>
+      </table>
+    </div>
+    <div id="deSummary"></div>
+  </div>
+</div>
+
+<!-- PAGE: GROUP -->
+<div class="page" id="pageGroup">
+  <div class="card">
+    <h2>👯 Group Stats</h2>
+    <div class="stats-row" id="groupStatsRow"></div>
+  </div>
+  <div class="card">
+    <h2>📊 Group Weight Progress Chart</h2>
+    <div class="group-chart-wrap"><canvas id="groupChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h2>📉 Group BMI Progress Chart</h2>
+    <div class="group-chart-wrap"><canvas id="groupBmiChart"></canvas></div>
+  </div>
+  <div class="card">
+    <h2>📋 Full Comparison Table</h2>
+    <div class="group-table-wrap">
+      <table class="group-table">
+        <thead id="groupTableHead"></thead>
+        <tbody id="groupTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="app-footer">
+  🌸 Made with love for Aimi, Misha, Tharsini, Awanis & Najiha 🌸<br>
+  Stay consistent, stay fabulous! ✨
+</div>
+
+<div id="toast"></div>
+
+<div class="modal-overlay" id="confirmModal">
+  <div class="modal-box">
+    <div class="modal-icon">🗑️</div>
+    <h3>Delete Entry?</h3>
+    <p id="confirmMsg">Are you sure?</p>
+    <div class="modal-actions">
+      <button class="btn-confirm-del" type="button" onclick="confirmDelete()">Yes, Delete</button>
+      <button class="btn-cancel-del"  type="button" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════
+   CONFIG  ✅ Najiha (updated)
+══════════════════════════════════════ */
+const MEMBERS = [
+  { name:'Aimi',     emoji:'🌸', color:'#2e7d32' },
+  { name:'Misha',    emoji:'🌷', color:'#1565c0' },
+  { name:'Tharsini', emoji:'🌺', color:'#d50000' },
+  { name:'Awanis',   emoji:'🍓', color:'#6a1b9a' },
+  { name:'Najiha',   emoji:'🌼', color:'#f9a825' },  // ✅ UPDATED
+];
+
+const WEEK_DATES = [
+  { label:'W1',  range:'27 Apr – 1 May'  },
+  { label:'W2',  range:'4 May – 8 May'   },
+  { label:'W3',  range:'11 May – 15 May' },
+  { label:'W4',  range:'18 May – 22 May' },
+  { label:'W5',  range:'25 May – 29 May' },
+  { label:'W6',  range:'1 Jun – 5 Jun'   },
+  { label:'W7',  range:'8 Jun – 12 Jun'  },
+  { label:'W8',  range:'15 Jun – 19 Jun' },
+  { label:'W9',  range:'22 Jun – 26 Jun' },
+  { label:'W10', range:'29 Jun – 3 Jul'  },
+  { label:'W11', range:'6 Jul – 10 Jul'  },
+  { label:'W12', range:'13 Jul – 17 Jul' },
+  { label:'W13', range:'20 Jul – 24 Jul' },
+  { label:'W14', range:'27 Jul – 31 Jul' },
+];
+
+const WEEK_STARTS = [
+  '2025-04-27','2025-05-04','2025-05-11','2025-05-18',
+  '2025-05-25','2025-06-01','2025-06-08','2025-06-15',
+  '2025-06-22','2025-06-29','2025-07-06','2025-07-13',
+  '2025-07-20','2025-07-27',
+].map(d => new Date(d));
+
+const PROGRAM_END = new Date('2025-08-01');
+const STORAGE_KEY = 'wlt_squad_v7';
+const HEIGHT_KEY  = 'wlt_heights_v7';
+
+/* ══════════════════════════════════════
+   STATE
+══════════════════════════════════════ */
+let currentMember  = 0;
+let indivChart     = null;
+let bmiChart       = null;
+let groupChart     = null;
+let groupBmiChart  = null;
+let data           = loadData();
+let heights        = loadHeights();
+window._deleteTarget = null;
+let editingKey     = null;
+
+/* ══════════════════════════════════════
+   STORAGE
+══════════════════════════════════════ */
+function loadData() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (s) {
+      MEMBERS.forEach(m => { if (!s[m.name]) s[m.name] = Array(14).fill(null); });
+      return s;
+    }
+  } catch(e) {}
+  return initData();
+}
+function initData() {
+  const d = {};
+  MEMBERS.forEach(m => { d[m.name] = Array(14).fill(null); });
+  return d;
+}
+function loadHeights() {
+  try {
+    const h = JSON.parse(localStorage.getItem(HEIGHT_KEY));
+    if (h) return h;
+  } catch(e) {}
+  const h = {};
+  MEMBERS.forEach(m => { h[m.name] = null; });
+  return h;
+}
+function persist()        { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+function persistHeights() { localStorage.setItem(HEIGHT_KEY,  JSON.stringify(heights)); }
+
+/* ══════════════════════════════════════
+   BMI HELPERS
+══════════════════════════════════════ */
+function calcBMI(weightKg, heightM) {
+  if (!weightKg || !heightM || heightM <= 0) return null;
+  return +(weightKg / (heightM * heightM)).toFixed(1);
+}
+function bmiCategory(bmi) {
+  if (bmi === null) return { label:'—',           cls:'none'        };
+  if (bmi < 18.5)  return { label:'Underweight',  cls:'underweight' };
+  if (bmi < 25)    return { label:'Normal',        cls:'normal'      };
+  if (bmi < 30)    return { label:'Overweight',    cls:'overweight'  };
+  return                  { label:'Obese',         cls:'obese'       };
+}
+function bmiColor(bmi) {
+  if (bmi === null) return '#ccc';
+  if (bmi < 18.5)  return '#1565c0';
+  if (bmi < 25)    return '#2e7d32';
+  if (bmi < 30)    return '#f57f17';
+  return '#c62828';
+}
+
+/* ══════════════════════════════════════
+   NAVIGATION
+══════════════════════════════════════ */
+function switchPage(page) {
+  ['tracker','dataentry','group'].forEach(p => {
+    document.getElementById('page' + cap(p)).classList.remove('active');
+    document.getElementById('nav'  + cap(p)).classList.remove('active');
+  });
+  document.getElementById('page' + cap(page)).classList.add('active');
+  document.getElementById('nav'  + cap(page)).classList.add('active');
+  if (page === 'group')     renderGroupPage();
+  if (page === 'dataentry') renderDataEntryTable();
+}
+function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+/* ══════════════════════════════════════
+   HELPERS
+══════════════════════════════════════ */
+function getCurrentWeekIndex() {
+  const today = new Date(); today.setHours(0,0,0,0);
+  for (let i = 0; i < WEEK_STARTS.length; i++) {
+    const end = i < WEEK_STARTS.length - 1 ? WEEK_STARTS[i+1] : PROGRAM_END;
+    if (today >= WEEK_STARTS[i] && today < end) return i;
+  }
+  return -1;
+}
+function showToast(msg, dur = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._t);
+  t._t = setTimeout(() => t.classList.remove('show'), dur);
+}
+
+/* ══════════════════════════════════════
+   WEEK BANNER
+══════════════════════════════════════ */
+function renderWeekBanner() {
+  const today    = new Date();
+  const curIdx   = getCurrentWeekIndex();
+  const daysLeft = Math.max(0, Math.ceil((PROGRAM_END - today) / 86400000));
+  const wkLabel  = curIdx >= 0
+    ? `${WEEK_DATES[curIdx].label} · ${WEEK_DATES[curIdx].range}`
+    : today < WEEK_STARTS[0] ? 'Starts 27 Apr 2025!' : '🎉 Program Complete!';
+  document.getElementById('weekBanner').innerHTML = `
+    <div class="wb-item">
+      <div class="wb-val">📅</div>
+      <div style="font-size:.88em;color:#880e4f;font-weight:700;">
+        ${today.toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'})}</div>
+      <div class="wb-lbl">Today</div>
+    </div>
+    <div class="divider">|</div>
+    <div class="wb-item">
+      <div style="font-size:1.05em;font-weight:700;color:#880e4f;">${wkLabel}</div>
+      <div class="wb-lbl">Current Week</div>
+    </div>
+    <div class="divider">|</div>
+    <div class="wb-item">
+      <div class="wb-val">${daysLeft}</div>
+      <div class="wb-lbl">Days Left</div>
+    </div>
+    <div class="divider">|</div>
+    <div class="wb-item">
+      <div class="wb-val">${curIdx >= 0 ? curIdx + 1 : '—'} / 14</div>
+      <div class="wb-lbl">Week No.</div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════
+   HEIGHT SETUP
+══════════════════════════════════════ */
+function renderHeightSetup() {
+  const m   = MEMBERS[currentMember];
+  const h   = heights[m.name];
+  const hCm = h ? Math.round(h * 100) : '';
+  const statusMsg = h
+    ? `<span class="height-display">✓ Height saved: <strong>${Math.round(h*100)} cm</strong> — BMI will auto-calculate!</span>`
+    : `<span class="height-display" style="color:#e65100;">⚠️ Please set height to enable BMI</span>`;
+  document.getElementById('heightSetupArea').innerHTML = `
+    <div class="height-setup">
+      <span style="font-size:1.5em;">${m.emoji}</span>
+      <label>📏 ${m.name}'s Height:</label>
+      <input type="number" id="heightInput" step="0.1" min="100" max="250"
+        placeholder="e.g. 160" value="${hCm}" style="width:110px;" />
+      <span style="font-size:0.85em;color:#ad1457;font-weight:600;">cm</span>
+      <button class="btn-set-height" type="button" onclick="saveHeight()">✅ Set Height</button>
+      ${statusMsg}
+    </div>`;
+}
+
+function saveHeight() {
+  const m  = MEMBERS[currentMember];
+  const cm = parseFloat(document.getElementById('heightInput').value);
+  if (isNaN(cm) || cm < 100 || cm > 250) {
+    showToast('⚠️ Please enter a valid height (100–250 cm)!');
+    return;
+  }
+  heights[m.name] = +(cm / 100).toFixed(4);
+  persistHeights();
+  renderTrackerPage();
+  showToast(`✅ Height saved for ${m.emoji} ${m.name}: ${cm} cm`);
+}
+
+/* ══════════════════════════════════════
+   TRACKER PAGE
+══════════════════════════════════════ */
+function renderTrackerPage() {
+  buildMemberTabs();
+  renderHeightSetup();
+  buildInputGrid();
+  updateIndivStats();
+  updateIndivChart();
+  updateBmiChart();
+}
+
+function buildMemberTabs() {
+  const el = document.getElementById('memberTabs');
+  el.innerHTML = '';
+  MEMBERS.forEach((m, i) => {
+    const d = document.createElement('div');
+    d.className = 'member-tab' + (i === currentMember ? ' active' : '');
+    d.innerHTML = `<span class="avatar">${m.emoji}</span>${m.name}`;
+    d.onclick = () => { currentMember = i; renderTrackerPage(); };
+    el.appendChild(d);
+  });
+}
+
+function buildInputGrid() {
+  const m      = MEMBERS[currentMember];
+  const curIdx = getCurrentWeekIndex();
+  const hM     = heights[m.name];
+  const grid   = document.getElementById('inputGrid');
+  grid.innerHTML = '';
+  WEEK_DATES.forEach((wk, i) => {
+    const prev  = data[m.name][i - 1];
+    const cur   = data[m.name][i];
+    const isCur = i === curIdx;
+    const isFut = curIdx >= 0 && i > curIdx;
+    let badge = `<div class="loss-badge neu">—</div>`;
+    if (cur !== null && prev !== null) {
+      const diff = +(cur - prev).toFixed(2);
+      const cls  = diff < 0 ? 'good' : diff > 0 ? 'bad' : 'neu';
+      const icon = diff < 0 ? '▼' : diff > 0 ? '▲' : '●';
+      const sign = diff > 0 ? '+' : '';
+      badge = `<div class="loss-badge ${cls}">${icon} ${sign}${diff} kg</div>`;
+    }
+    const bmi  = calcBMI(cur, hM);
+    const cat  = bmiCategory(bmi);
+    const bmiBadgeHtml = bmi !== null
+      ? `<div class="bmi-badge ${cat.cls}">BMI ${bmi} · ${cat.label}</div>`
+      : `<div class="bmi-badge none">BMI —</div>`;
+    grid.innerHTML += `
+      <div class="week-input-box${isCur ? ' current-week' : ''}">
+        <div class="week-label">${wk.label}</div>
+        <div class="week-date">${wk.range}</div>
+        <input type="number" id="tw${i}" step="0.1" min="0" max="300"
+          placeholder="kg" value="${cur !== null ? cur : ''}"
+          style="${isFut ? 'opacity:0.45;' : ''}"
+          oninput="onTrackerInput(${i})" />
+        <div id="tbadge${i}">${badge}</div>
+        <div id="tbmi${i}">${bmiBadgeHtml}</div>
+      </div>`;
+  });
+}
+
+function onTrackerInput(idx) {
+  const m   = MEMBERS[currentMember];
+  const raw = document.getElementById('tw' + idx).value;
+  const val = parseFloat(raw);
+  data[m.name][idx] = (!isNaN(val) && val > 0) ? val : null;
+  persist();
+  const prev = data[m.name][idx - 1];
+  const cur  = data[m.name][idx];
+  const hM   = heights[m.name];
+  const el   = document.getElementById('tbadge' + idx);
+  if (cur !== null && prev !== null) {
+    const diff = +(cur - prev).toFixed(2);
+    const cls  = diff < 0 ? 'good' : diff > 0 ? 'bad' : 'neu';
+    const icon = diff < 0 ? '▼' : diff > 0 ? '▲' : '●';
+    const sign = diff > 0 ? '+' : '';
+    el.innerHTML = `<div class="loss-badge ${cls}">${icon} ${sign}${diff} kg</div>`;
+  } else {
+    el.innerHTML = `<div class="loss-badge neu">—</div>`;
+  }
+  const bmi   = calcBMI(cur, hM);
+  const cat   = bmiCategory(bmi);
+  const bmiEl = document.getElementById('tbmi' + idx);
+  bmiEl.innerHTML = bmi !== null
+    ? `<div class="bmi-badge ${cat.cls}">BMI ${bmi} · ${cat.label}</div>`
+    : `<div class="bmi-badge none">BMI —</div>`;
+  updateIndivStats();
+  updateIndivChart();
+  updateBmiChart();
+}
+
+function saveTrackerData() {
+  const m = MEMBERS[currentMember];
+  let savedCount = 0;
+  WEEK_DATES.forEach((_, i) => {
+    const inp = document.getElementById('tw' + i);
+    if (!inp) return;
+    const v = parseFloat(inp.value);
+    if (!isNaN(v) && v > 0) { data[m.name][i] = v; savedCount++; }
+    else if (inp.value === '') { data[m.name][i] = null; }
+  });
+  persist();
+  showToast(`💾 Saved ${savedCount} entries for ${m.emoji} ${m.name}!`);
+  renderTrackerPage();
+}
+
+/* ══════════════════════════════════════
+   INDIVIDUAL STATS
+══════════════════════════════════════ */
+function updateIndivStats() {
+  const m   = MEMBERS[currentMember];
+  const ws  = data[m.name].filter(v => v !== null);
+  const fst = ws[0] ?? null;
+  const lst = ws[ws.length - 1] ?? null;
+  const tot = (fst !== null && lst !== null) ? +(fst - lst).toFixed(2) : null;
+  let best  = null;
+  data[m.name].forEach((v, i) => {
+    if (i > 0 && v !== null && data[m.name][i-1] !== null) {
+      const d = +(data[m.name][i-1] - v).toFixed(2);
+      if (best === null || d > best) best = d;
+    }
+  });
+  const hM       = heights[m.name];
+  const curBMI   = calcBMI(lst, hM);
+  const startBMI = calcBMI(fst, hM);
+  const curCat   = bmiCategory(curBMI);
+  document.getElementById('statsRow').innerHTML = `
+    <div class="stat-box">
+      <div class="stat-label">🏁 Starting</div>
+      <div class="stat-value">${fst ?? '—'}<span class="stat-unit">${fst !== null ? ' kg' : ''}</span></div>
+      ${startBMI ? `<div style="margin-top:4px;">
+        <span class="bmi-badge ${bmiCategory(startBMI).cls}" style="font-size:0.6em;">BMI ${startBMI}</span>
+      </div>` : ''}
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">📍 Current</div>
+      <div class="stat-value">${lst ?? '—'}<span class="stat-unit">${lst !== null ? ' kg' : ''}</span></div>
+      ${curBMI ? `<div style="margin-top:4px;">
+        <span class="bmi-badge ${curCat.cls}" style="font-size:0.6em;">BMI ${curBMI} · ${curCat.label}</span>
+      </div>` : ''}
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">🏆 Total Lost</div>
+      <div class="stat-value" style="color:${tot!==null&&tot>0?'#2e7d32':tot!==null&&tot<0?'#c62828':'#880e4f'}">
+        ${tot !== null ? (tot > 0 ? '↓ ' : tot < 0 ? '↑ ' : '') + Math.abs(tot) : '—'}
+        <span class="stat-unit">${tot !== null ? ' kg' : ''}</span>
+      </div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">📉 BMI Change</div>
+      <div class="stat-value" style="font-size:1.1em;color:${startBMI&&curBMI&&curBMI<startBMI?'#2e7d32':'#880e4f'}">
+        ${startBMI && curBMI ? `${startBMI} → ${curBMI}` : '—'}
+      </div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">⭐ Best Week</div>
+      <div class="stat-value" style="color:#2e7d32;">
+        ${best !== null && best > 0 ? '↓ ' + best : '—'}
+        <span class="stat-unit">${best !== null && best > 0 ? ' kg' : ''}</span>
+      </div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">📅 Weeks Logged</div>
+      <div class="stat-value">${ws.length}<span class="stat-unit"> / 14</span></div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════
+   CHARTS
+══════════════════════════════════════ */
+function updateIndivChart() {
+  if (indivChart) { indivChart.destroy(); indivChart = null; }
+  const m   = MEMBERS[currentMember];
+  const ctx = document.getElementById('indivChart').getContext('2d');
+  indivChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: WEEK_DATES.map(w => w.label),
+      datasets: [{
+        label: `${m.emoji} ${m.name} Weight (kg)`,
+        data: WEEK_DATES.map((_, i) => data[m.name][i]),
+        borderColor: m.color, backgroundColor: m.color + '28',
+        pointBackgroundColor: m.color, pointBorderColor: '#fff', pointBorderWidth: 2,
+        pointRadius: 6, pointHoverRadius: 9, fill: true, tension: 0.4, spanGaps: true, borderWidth: 3,
+      }]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#880e4f', font: { size: 13, weight: 'bold' } } },
+        tooltip: { callbacks: {
+          title: items => `${WEEK_DATES[items[0].dataIndex].label} · ${WEEK_DATES[items[0].dataIndex].range}`,
+          label: ctx  => ctx.parsed.y !== null ? ` Weight: ${ctx.parsed.y} kg` : ' No data',
+        }}
+      },
+      scales: {
+        x: { ticks: { color: '#c2185b', font: { weight: '600' } }, grid: { color: '#fde8f3' } },
+        y: { ticks: { color: '#c2185b' }, grid: { color: '#fde8f3' },
+             title: { display: true, text: 'Weight (kg)', color: '#c2185b', font: { weight: '600' } } }
+      }
+    }
+  });
+}
+
+function updateBmiChart() {
+  if (bmiChart) { bmiChart.destroy(); bmiChart = null; }
+  const m        = MEMBERS[currentMember];
+  const hM       = heights[m.name];
+  const bmiData  = WEEK_DATES.map((_, i) => calcBMI(data[m.name][i], hM));
+  const ptColors = bmiData.map(b => b === null ? '#ccc' : bmiColor(b));
+  const ctx      = document.getElementById('bmiChart').getContext('2d');
+  bmiChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: WEEK_DATES.map(w => w.label),
+      datasets: [
+        {
+          label: `${m.emoji} ${m.name} BMI`,
+          data: bmiData,
+          borderColor: m.color, backgroundColor: m.color + '22',
+          pointBackgroundColor: ptColors, pointBorderColor: '#fff', pointBorderWidth: 2,
+          pointRadius: 7, pointHoverRadius: 10, fill: true, tension: 0.4, spanGaps: true, borderWidth: 3,
+        },
+        { label: 'Underweight (<18.5)', data: Array(14).fill(18.5),
+          borderColor: '#90caf9', borderDash: [6,4], borderWidth: 1.5, pointRadius: 0, fill: false },
+        { label: 'Normal limit (25)',   data: Array(14).fill(25),
+          borderColor: '#a5d6a7', borderDash: [6,4], borderWidth: 1.5, pointRadius: 0, fill: false },
+        { label: 'Overweight limit (30)', data: Array(14).fill(30),
+          borderColor: '#ffe082', borderDash: [6,4], borderWidth: 1.5, pointRadius: 0, fill: false },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#880e4f', font: { size: 12, weight: 'bold' }, padding: 12 } },
+        tooltip: { callbacks: {
+          title: items => `${WEEK_DATES[items[0].dataIndex] ? WEEK_DATES[items[0].dataIndex].label : ''} BMI`,
+          label: ctx => {
+            if (ctx.datasetIndex === 0 && ctx.parsed.y !== null) {
+              const cat = bmiCategory(ctx.parsed.y);
+              return ` BMI: ${ctx.parsed.y} — ${cat.label}`;
+            }
+            return ` ${ctx.dataset.label}: ${ctx.parsed.y}`;
+          }
+        }}
+      },
+      scales: {
+        x: { ticks: { color: '#c2185b', font: { weight: '600' } }, grid: { color: '#fde8f3' } },
+        y: { ticks: { color: '#c2185b' }, grid: { color: '#fde8f3' },
+             title: { display: true, text: 'BMI', color: '#c2185b', font: { weight: '600' } },
+             min: 10, suggestedMax: 40 }
+      }
+    }
+  });
+}
+
+/* ══════════════════════════════════════
+   DATA ENTRY
+══════════════════════════════════════ */
+function initDataEntryDropdowns() {
+  const fMem = document.getElementById('deFilterMember');
+  const fWk  = document.getElementById('deFilterWeek');
+  fMem.innerHTML = '<option value="">👥 All Members</option>';
+  fWk.innerHTML  = '<option value="">📅 All Weeks</option>';
+  MEMBERS.forEach(m => { fMem.innerHTML += `<option value="${m.name}">${m.emoji} ${m.name}</option>`; });
+  WEEK_DATES.forEach((w, i) => { fWk.innerHTML += `<option value="${i}">${w.label} (${w.range})</option>`; });
+  const aMem = document.getElementById('addMember');
+  const aWk  = document.getElementById('addWeek');
+  aMem.innerHTML = '';
+  aWk.innerHTML  = '';
+  MEMBERS.forEach(m => { aMem.innerHTML += `<option value="${m.name}">${m.emoji} ${m.name}</option>`; });
+  WEEK_DATES.forEach((w, i) => { aWk.innerHTML += `<option value="${i}">${w.label} (${w.range})</option>`; });
+}
+
+function openAddForm() {
+  document.getElementById('addFormCard').classList.add('visible');
+  document.getElementById('addWeight').value = '';
+  document.getElementById('addWeight').focus();
+}
+function closeAddForm() {
+  document.getElementById('addFormCard').classList.remove('visible');
+  document.getElementById('addWeight').value = '';
+}
+
+function submitAddEntry() {
+  const memberName = document.getElementById('addMember').value;
+  const weekIdx    = parseInt(document.getElementById('addWeek').value, 10);
+  const weight     = parseFloat(document.getElementById('addWeight').value);
+  if (!memberName)                          { showToast('⚠️ Select a member!'); return; }
+  if (isNaN(weekIdx)||weekIdx<0||weekIdx>13){ showToast('⚠️ Select a week!'); return; }
+  if (isNaN(weight)||weight<=0||weight>300) { showToast('⚠️ Enter valid weight (1–300 kg)!'); return; }
+  const existing = data[memberName][weekIdx];
+  data[memberName][weekIdx] = weight;
+  persist();
+  closeAddForm();
+  renderDataEntryTable();
+  renderTrackerPage();
+  showToast(existing !== null
+    ? `✏️ Updated ${memberName}'s ${WEEK_DATES[weekIdx].label}: ${weight} kg`
+    : `✅ Added ${memberName}'s ${WEEK_DATES[weekIdx].label}: ${weight} kg`, 3500);
+}
+
+function renderDataEntryTable() {
+  const fM         = document.getElementById('deFilterMember').value;
+  const fW         = document.getElementById('deFilterWeek').value;
+  const filterWeek = fW === '' ? null : parseInt(fW, 10);
+  const tbody      = document.getElementById('deTableBody');
+  tbody.innerHTML  = '';
+  let rows = [];
+  MEMBERS.forEach(m => {
+    data[m.name].forEach((w, i) => {
+      if (w === null) return;
+      if (fM && fM !== m.name) return;
+      if (filterWeek !== null && filterWeek !== i) return;
+      const prev   = data[m.name][i - 1];
+      const change = prev !== null ? +(w - prev).toFixed(2) : null;
+      const bmi    = calcBMI(w, heights[m.name]);
+      rows.push({ memberName: m.name, emoji: m.emoji, color: m.color, weekIdx: i, weight: w, change, bmi });
+    });
+  });
+  if (rows.length === 0) {
+    tbody.innerHTML = `<tr class="no-data-row"><td colspan="9">
+      🌸 No entries yet. Click <strong>➕ Add Entry</strong> to get started!</td></tr>`;
+    document.getElementById('deSummary').innerHTML = '';
+    return;
+  }
+  rows.forEach((row, idx) => {
+    const safeKey = `${row.memberName.replace(/\s/g,'_')}_${row.weekIdx}`;
+    const editKey = `${row.memberName}-${row.weekIdx}`;
+    const isEdit  = editingKey === editKey;
+    const cat     = bmiCategory(row.bmi);
+    const weightCell = isEdit
+      ? `<input class="inline-edit-input" type="number" id="iei_${safeKey}"
+           step="0.1" min="1" max="300" value="${row.weight}"/>`
+      : `<strong>${row.weight.toFixed(1)}</strong> <span style="font-size:.8em;color:#ad1457;">kg</span>`;
+    const bmiCell = row.bmi !== null
+      ? `<span class="bmi-badge ${cat.cls}">${row.bmi}</span>`
+      : `<span class="bmi-badge none">—</span>`;
+    const catCell = row.bmi !== null
+      ? `<span class="bmi-badge ${cat.cls}">${cat.label}</span>`
+      : `<span class="bmi-badge none">—</span>`;
+    const actionCell = isEdit
+      ? `<div class="action-btns">
+           <button class="btn-sm btn-save-row" type="button"
+             onclick="confirmEdit('${row.memberName}',${row.weekIdx},'${safeKey}')">✅ Save</button>
+           <button class="btn-sm btn-cancel-row" type="button" onclick="cancelEdit()">✖</button>
+         </div>`
+      : `<div class="action-btns">
+           <button class="btn-sm btn-edit" type="button"
+             onclick="startEdit('${row.memberName}',${row.weekIdx})">✏️ Edit</button>
+           <button class="btn-sm btn-delete" type="button"
+             onclick="askDelete('${row.memberName}',${row.weekIdx})">🗑️ Delete</button>
+         </div>`;
+    tbody.innerHTML += `
+      <tr id="derow_${safeKey}">
+        <td style="color:#ad1457;font-weight:700;font-size:.85em;">${idx + 1}</td>
+        <td><span class="member-chip" style="border-color:${row.color};color:${row.color};">
+          ${row.emoji} ${row.memberName}</span></td>
+        <td><strong style="color:#c2185b;">${WEEK_DATES[row.weekIdx].label}</strong></td>
+        <td style="font-size:.82em;color:#888;">${WEEK_DATES[row.weekIdx].range}</td>
+        <td class="tc">${weightCell}</td>
+        <td class="tc">${bmiCell}</td>
+        <td class="tc">${catCell}</td>
+        <td class="tc">${changePillHtml(row.change)}</td>
+        <td class="tc">${actionCell}</td>
+      </tr>`;
+  });
+  const total     = rows.length;
+  const avgW      = (rows.reduce((s, r) => s + r.weight, 0) / total).toFixed(1);
+  const losses    = rows.filter(r => r.change !== null && r.change < 0).length;
+  const normalBmi = rows.filter(r => r.bmi !== null && r.bmi >= 18.5 && r.bmi < 25).length;
+  document.getElementById('deSummary').innerHTML = `
+    <div class="summary-bar">
+      <span class="summary-pill" style="background:#fff0f8;border:1.5px solid #ffb3d9;color:#c2185b;">📊 ${total} entries</span>
+      <span class="summary-pill" style="background:#fce4ec;border:1.5px solid #f48fb1;color:#880e4f;">⚖️ Avg: ${avgW} kg</span>
+      <span class="summary-pill" style="background:#e8f5e9;border:1.5px solid #a5d6a7;color:#2e7d32;">📉 ${losses} losses</span>
+      <span class="summary-pill" style="background:#e8f5e9;border:1.5px solid #a5d6a7;color:#1b5e20;">✅ ${normalBmi} Normal BMI</span>
+    </div>`;
+}
+
+function changePillHtml(change) {
+  if (change === null) return `<span class="change-pill none">—</span>`;
+  if (change < 0) return `<span class="change-pill down">▼ ${Math.abs(change).toFixed(1)} kg</span>`;
+  if (change > 0) return `<span class="change-pill up">▲ ${change.toFixed(1)} kg</span>`;
+  return `<span class="change-pill same">● No change</span>`;
+}
+
+function startEdit(memberName, weekIdx) {
+  editingKey = `${memberName}-${weekIdx}`;
+  renderDataEntryTable();
+}
+function confirmEdit(memberName, weekIdx, safeKey) {
+  const inp = document.getElementById('iei_' + safeKey);
+  if (!inp) return;
+  const val = parseFloat(inp.value);
+  if (isNaN(val) || val <= 0 || val > 300) { showToast('⚠️ Enter valid weight (1–300 kg)!'); return; }
+  const old = data[memberName][weekIdx];
+  data[memberName][weekIdx] = val;
+  persist();
+  editingKey = null;
+  renderDataEntryTable();
+  renderTrackerPage();
+  showToast(`✏️ Updated ${memberName} ${WEEK_DATES[weekIdx].label}: ${old} → ${val} kg`);
+}
+function cancelEdit() { editingKey = null; renderDataEntryTable(); }
+
+/* ══════════════════════════════════════
+   ✅ DELETE — FULLY FIXED
+══════════════════════════════════════ */
+function askDelete(memberName, weekIdx) {
+  const wIdx = parseInt(weekIdx, 10);
+  window._deleteTarget = { memberName: memberName, weekIdx: wIdx };
+  const currentWeight  = data[memberName][wIdx];
+  document.getElementById('confirmMsg').innerHTML =
+    `Delete <strong>${memberName}</strong>'s entry for
+     <strong>${WEEK_DATES[wIdx].label}</strong> (${WEEK_DATES[wIdx].range})?<br><br>
+     <span style="color:#e53935;font-weight:700;">
+       Weight: ${currentWeight !== null ? currentWeight + ' kg' : 'No data'}
+     </span>`;
+  document.getElementById('confirmModal').classList.add('visible');
+}
+
+function confirmDelete() {
+  const target = window._deleteTarget;
+  if (!target) { closeModal(); return; }
+  const memberName = target.memberName;
+  const weekIdx    = parseInt(target.weekIdx, 10);
+  const oldWeight  = data[memberName][weekIdx];
+  data[memberName][weekIdx] = null;
+  persist();
+  window._deleteTarget = null;
+  closeModal();
+  renderDataEntryTable();
+  renderTrackerPage();
+  showToast(`🗑️ Deleted ${memberName}'s ${WEEK_DATES[weekIdx].label} (${oldWeight !== null ? oldWeight + ' kg' : ''})`);
+}
+
+function closeModal() {
+  window._deleteTarget = null;
+  document.getElementById('confirmModal').classList.remove('visible');
+}
+
+/* ══════════════════════════════════════
+   GROUP PAGE
+══════════════════════════════════════ */
+function renderGroupPage() {
+  updateGroupStats();
+  updateGroupChart();
+  updateGroupBmiChart();
+  updateGroupTable();
+}
+
+function updateGroupStats() {
+  let totalLost = 0, count = 0, maxLost = -Infinity, mvp = null;
+  MEMBERS.forEach(m => {
+    const ws = data[m.name].filter(v => v !== null);
+    if (ws.length >= 2) {
+      const lost = +(ws[0] - ws[ws.length-1]).toFixed(2);
+      totalLost += lost; count++;
+      if (lost > maxLost) { maxLost = lost; mvp = m; }
+    }
+  });
+  document.getElementById('groupStatsRow').innerHTML = `
+    <div class="stat-box">
+      <div class="stat-label">👭 Members Tracking</div>
+      <div class="stat-value">${count}<span class="stat-unit"> / ${MEMBERS.length}</span></div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">🔥 Total Group Loss</div>
+      <div class="stat-value" style="color:${count>0&&totalLost>0?'#2e7d32':'#880e4f'}">
+        ${count>0&&totalLost>0 ? '↓ '+totalLost.toFixed(1) : '—'}
+        <span class="stat-unit">${count>0&&totalLost>0?' kg':''}</span>
+      </div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">🏅 Squad MVP</div>
+      <div class="stat-value" style="font-size:.95em;">${mvp ? mvp.emoji+' '+mvp.name : '—'}</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-label">💫 Avg Loss/Member</div>
+      <div class="stat-value">
+        ${count > 0 ? (totalLost/count).toFixed(1) : '—'}
+        <span class="stat-unit">${count > 0 ? ' kg' : ''}</span>
+      </div>
+    </div>`;
+}
+
+function updateGroupChart() {
+  if (groupChart) { groupChart.destroy(); groupChart = null; }
+  const ctx = document.getElementById('groupChart').getContext('2d');
+  groupChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: WEEK_DATES.map(w => w.label),
+      datasets: MEMBERS.map(m => ({
+        label: `${m.emoji} ${m.name}`,
+        data: WEEK_DATES.map((_, i) => data[m.name][i]),
+        borderColor: m.color, backgroundColor: m.color + '18',
+        pointBackgroundColor: m.color, pointBorderColor: '#fff', pointBorderWidth: 2,
+        pointRadius: 5, pointHoverRadius: 8, fill: false, tension: 0.4, spanGaps: true, borderWidth: 3,
+      }))
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#333', font: { size: 12, weight: 'bold' }, padding: 14, usePointStyle: true } },
+        tooltip: { callbacks: {
+          title: items => `${WEEK_DATES[items[0].dataIndex].label} · ${WEEK_DATES[items[0].dataIndex].range}`,
+          label: ctx  => ` ${ctx.dataset.label}: ${ctx.parsed.y !== null ? ctx.parsed.y + ' kg' : 'No data'}`,
+        }}
+      },
+      scales: {
+        x: { ticks: { color: '#c2185b', font: { weight: '600' } }, grid: { color: '#fde8f3' } },
+        y: { ticks: { color: '#c2185b' }, grid: { color: '#fde8f3' },
+             title: { display: true, text: 'Weight (kg)', color: '#c2185b', font: { weight: '600' } } }
+      }
+    }
+  });
+}
+
+function updateGroupBmiChart() {
+  if (groupBmiChart) { groupBmiChart.destroy(); groupBmiChart = null; }
+  const ctx = document.getElementById('groupBmiChart').getContext('2d');
+  groupBmiChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: WEEK_DATES.map(w => w.label),
+      datasets: [
+        ...MEMBERS.map(m => ({
+          label: `${m.emoji} ${m.name}`,
+          data: WEEK_DATES.map((_, i) => calcBMI(data[m.name][i], heights[m.name])),
+          borderColor: m.color, backgroundColor: m.color + '18',
+          pointBackgroundColor: m.color, pointBorderColor: '#fff', pointBorderWidth: 2,
+          pointRadius: 5, pointHoverRadius: 8, fill: false, tension: 0.4, spanGaps: true, borderWidth: 3,
+        })),
+        { label: 'Underweight (<18.5)', data: Array(14).fill(18.5),
+          borderColor: '#90caf9', borderDash: [6,4], borderWidth: 1.5, pointRadius: 0, fill: false },
+        { label: 'Normal limit (25)',   data: Array(14).fill(25),
+          borderColor: '#a5d6a7', borderDash: [6,4], borderWidth: 1.5, pointRadius: 0, fill: false },
+        { label: 'Overweight limit (30)', data: Array(14).fill(30),
+          borderColor: '#ffe082', borderDash: [6,4], borderWidth: 1.5, pointRadius: 0, fill: false },
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#333', font: { size: 12, weight: 'bold' }, padding: 12, usePointStyle: true } },
+        tooltip: { callbacks: {
+          title: items => `${WEEK_DATES[items[0].dataIndex] ? WEEK_DATES[items[0].dataIndex].label : ''} · BMI`,
+          label: ctx => {
+            if (ctx.datasetIndex < MEMBERS.length && ctx.parsed.y !== null) {
+              const cat = bmiCategory(ctx.parsed.y);
+              return ` ${ctx.dataset.label}: BMI ${ctx.parsed.y} (${cat.label})`;
+            }
+            return ` ${ctx.dataset.label}`;
+          }
+        }}
+      },
+      scales: {
+        x: { ticks: { color: '#c2185b', font: { weight: '600' } }, grid: { color: '#fde8f3' } },
+        y: { ticks: { color: '#c2185b' }, grid: { color: '#fde8f3' },
+             title: { display: true, text: 'BMI', color: '#c2185b', font: { weight: '600' } },
+             min: 10, suggestedMax: 40 }
+      }
+    }
+  });
+}
+
+function updateGroupTable() {
+  document.getElementById('groupTableHead').innerHTML = `
+    <tr>
+      <th>Member</th>
+      ${WEEK_DATES.map(w => `<th>${w.label}<span class="th-date">${w.range}</span></th>`).join('')}
+      <th>Total Lost</th>
+      <th>Latest BMI</th>
+    </tr>`;
+  document.getElementById('groupTableBody').innerHTML = MEMBERS.map(m => {
+    const ws     = data[m.name];
+    const filled = ws.filter(v => v !== null);
+    const first  = filled[0] ?? null;
+    const last   = filled[filled.length - 1] ?? null;
+    const diff   = first !== null && last !== null ? +(first - last).toFixed(2) : null;
+    const latestBMI = calcBMI(last, heights[m.name]);
+    const cat    = bmiCategory(latestBMI);
+    const cells  = WEEK_DATES.map((_, i) => {
+      const v = ws[i], prev = ws[i-1];
+      let txt = v !== null ? v.toFixed(1) : '—', style = '';
+      if (v !== null && prev !== null) {
+        const d = v - prev;
+        style = d < 0 ? 'color:#2e7d32;font-weight:700' : d > 0 ? 'color:#c62828;font-weight:700' : '';
+        txt   = (d < 0 ? '▼ ' : d > 0 ? '▲ ' : '') + txt;
+      }
+      return `<td style="${style}">${txt}</td>`;
+    }).join('');
+    const bc = diff === null ? 'neu' : diff > 0 ? 'pos' : diff < 0 ? 'neg' : 'neu';
+    const bt = diff === null ? '—'
+      : diff > 0 ? `↓ ${diff.toFixed(1)} kg`
+      : diff < 0 ? `↑ ${Math.abs(diff).toFixed(1)} kg`
+      : 'No change';
+    return `<tr>
+      <td class="name-col" style="color:${m.color};">${m.emoji} ${m.name}</td>
+      ${cells}
+      <td><span class="badge-loss ${bc}">${bt}</span></td>
+      <td>${latestBMI !== null
+        ? `<span class="bmi-badge ${cat.cls}">${latestBMI} · ${cat.label}</span>`
+        : '—'}</td>
+    </tr>`;
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   INIT
+══════════════════════════════════════ */
+function init() {
+  renderWeekBanner();
+  initDataEntryDropdowns();
+  renderTrackerPage();
+}
+init();
+</script>
+</body>
+</html>
+
+							<script>
+                            	
+							</script>
+                        </body>
+                        </html>
+                    
